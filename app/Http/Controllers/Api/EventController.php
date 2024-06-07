@@ -24,7 +24,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
 
-    //Colocar Headers para retornar um JSON com as validações
+        //Colocar Headers para retornar um JSON com as validações
 
         $event = Event::create(
             [...$request->validate([
@@ -50,16 +50,28 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Event $event)
     {
-        //
+
+        $data = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'start_time' => 'sometimes|date',
+            'end_time' => 'sometimes|date|after:start_time',
+        ]);
+
+        $event->update($data);
+
+        return $event;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Event $event)
     {
-        //
+        $event->delete();
+
+        return response()->json(['message' => 'Event deleted successfully'], status: 204);
     }
 }
