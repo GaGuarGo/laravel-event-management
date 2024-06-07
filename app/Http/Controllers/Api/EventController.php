@@ -16,7 +16,7 @@ class EventController extends Controller
     {
         //Processo de Serializing-> transformando em JSON
 
-        return EventResource::collection(Event::with('user')->get());
+        return EventResource::collection(Event::with('user')->paginate());
     }
 
     /**
