@@ -7,6 +7,7 @@ use App\Http\Resources\EventResource;
 use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
@@ -53,7 +54,7 @@ class EventController extends Controller
                 'end_time' => 'required|date|after:start_time',
             ]),
                 'user_id' => $request->user()->id,
-                ]
+            ]
         );
 
         return new EventResource($this->loadRelationships($event, $this->relations));
@@ -74,6 +75,11 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
+//        if (Gate::denies('update-event', $event)) {
+//            abort(403, 'You are not authorized to update this event.');
+//        }
+
+        $this->authorize("update-event", $event);
 
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
